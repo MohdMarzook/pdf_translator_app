@@ -1,0 +1,154 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/custom.css' %}">
+    <script src="https://kit.fontawesome.com/9e0958114b.js" crossorigin="anonymous"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap" rel="stylesheet">
+    <title>testing</title>
+    <script>
+        function exchangeOptions() {
+            const dropdown1 = document.getElementById('frommenu');
+            const dropdown2 = document.getElementById('tomenu');
+            const selectedValue1 = dropdown1.value;
+            const selectedValue2 = dropdown2.value;
+            if(selectedValue1 != "auto"){
+
+                dropdown1.value = selectedValue2;
+                dropdown2.value = selectedValue1;
+            }
+
+            
+        }
+        function showsubmitbutton(thefile){
+            var submitbutton = document.getElementById('submit-button');
+            var submitbox = document.getElementById('submitbox')
+            var file = thefile.files[0];
+            if (file) {
+                document.getElementById('file-name').textContent = file.name;
+                document.getElementById('file-size').textContent = (file.size / 1024).toFixed(2) + ' KB';
+                submitbox.style.display = 'flex';
+                document.getElementById('box').style.display = 'none';
+            } 
+        }
+        function removeFile(file) {
+            document.getElementById('file-name').textContent = "";
+            document.getElementById('file-size').textContent = "";
+            file.value = null;
+            document.getElementById('box').style.display = 'flex';
+            submitbox.style.display = 'none';
+            // document.getElementById('submit-button').style.display = 'none';
+        }
+    </script>
+</head>
+<body>
+    <div class="navbar">
+        <div class="left">
+            <div class="logo">logo</div>
+            <div class="items">item 1</div>
+        </div>
+        <div class="right">
+            <div class="items">about</div>
+            <div class="items">my site</div>
+        </div>
+    </div>
+    <form id="fileform" method="post" enctype="multipart/form-data" novalidate>
+        <div class="content">
+            <div class="lang">
+                <div class="fromlangs">
+                    <div class="symbol"><i class="fa-solid fa-language fa-2xl" style="color: #eeeeee; padding: 0 20px;"></i></div>
+                    <div class="fromlangs">
+                        <select class="menu" name="from" id="frommenu">
+                            <option value="auto">Auto detect</option>
+                            {% for i, j in langs.items %}
+                            <option value="{{ j }}">{{ i }}</option>
+                            {% endfor %}    
+                        </select>
+                    </div>  
+                </div>
+                <div class="exchange">
+                    <button type="button" onclick="exchangeOptions()"><i style="color: #EEEEEE;" class="fa-solid fa-right-left"></i></button>
+                </div>
+                <div class="tolangs">
+                    <select class="menu" name="to" id="tomenu">
+                        {% for i, j in langs.items %}
+                        <option value="{{ j }}">{{ i }}</option>
+                        {% endfor %}    
+                    </select>
+                </div>
+            </div>
+            <div id="box" class="box">
+                <div class="leftbox" id="draganddrop">
+                    <img style="width: 240px; color: #000;" src="https://ssl.gstatic.com/translate/drag_and_drop.png" alt="upload cloud image">
+                    <!-- <form id="fileform1" action="" method="post" enctype="multipart/form-data"> -->
+                        {% csrf_token %}    
+
+                        {{ form.file }}  
+                        
+                    </form>
+                    <h3 style="line-height: 25px;">Drag and drop <br> your files here</h3>
+                </div>
+                <hr class="divider_line">
+                <div class="rightbox">
+                    
+                    <h3>Or choose a file</h3>
+                    
+                        {% csrf_token %}
+
+                        {{ form.file }}  
+                        
+                        <button class="btnstyle" type="button" id="get_file" >Browse your file</button>
+
+                    <span class="supfile">Supported file types: .pdf</span>
+                </div>
+            </div>
+            <div style="display: none;" id="submitbox" class="submit-box">
+                <div class="file-details">
+                    <div><img style="filter: invert(100%);" src="https://img.icons8.com/ios/50/000000/file.png" alt="File Icon"></div>
+                    <div class="fname-fsize" >
+                        <span id="file-name" class="file-name"></span>
+                        <span id="file-size" class="file-size"></span>
+                    </div>
+                    <div><button type="button" class="remove-button" onclick="removeFile(this)">×</button></div>
+                </div>
+                <button id="translate-button" class="btnstyle" type="submit" form="fileform">Translate</button>
+            </div>
+        </div>
+    </form>
+    <script src="{% static 'javascript/customscript.js' %}"></script>
+    <div id="response"></div>
+    <script>
+        const button = document.getElementById('translate-button');
+        document.getElementById('fileform').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const response = await fetch('{% url "file_upload" %}', {
+                method: 'POST',
+                url:'/upload',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: formData,
+            });
+
+            button.disabled = true;
+            button.style.backgroundColor = "#00b5bf00";
+            button.style.color = "black";
+
+            const data = await response.json(); 
+            if (response.ok) {
+                const downloadLink = document.createElement('a');
+                downloadLink.href = `/download/${data.unique_tag}/`;
+                downloadLink.innerText = 'Download Translated PDF';
+                document.getElementById('response').appendChild(downloadLink);
+            } else {
+                document.getElementById('response').innerText = `Error: ${data.error}`;
+            }
+        });
+    </script>
+</body>
+</html>
