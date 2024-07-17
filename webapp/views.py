@@ -12,12 +12,8 @@ def file_upload_view(request):
    if request.method == 'POST':
         file = request.FILES['file']
         fname , fsize, ftype = file.name, file.size, file.content_type
-        print(fname)
-        # new_file_name = f"{str(file.name).split('.pdf')[0]}_{request.POST['from']}_{request.POST['to']}.html"
+
         form = PDFFileForm(request.POST, request.FILES)
-        input()
-        print(request.POST['from'])
-        print(request.POST['to'])
         
         if form.is_valid():
             pdf = form.save(commit=False) 
@@ -55,8 +51,8 @@ def index(request):
 def download_file(request, unique_tag):
     try:
         pdf_record = PDFFile.objects.get(unique_tag=unique_tag)
-        print(pdf_record)
-        print(pdf_record.file)
+        # print(pdf_record)
+        # print(pdf_record.file)
         response = HttpResponse(pdf_record.translated_html, content_type='text/html')
         # print(pdf_record.translated_file.name)
         # print(pdf_record.file.name)

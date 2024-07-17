@@ -77,7 +77,7 @@ def html_parser(html_filename, newfilename, og_name, to_lang, from_lang ):
     create_directory('./media/translated_pdf')
     with open(html_filename, 'w', encoding='utf-8') as file:
         file.write(str(soup))
-    print("\nSaving translated file")
+    # print("\nSaving translated file")
     # html2pdf_and_save(html_filename, newfilename, og_name)
 
 def pdf2html(filename, newfilename):
