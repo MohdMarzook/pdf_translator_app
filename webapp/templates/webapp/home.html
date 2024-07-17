@@ -4,12 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="{%static 'images/poto.png'%}">
     <link rel="stylesheet" href="{% static 'css/custom.css' %}">
     <script src="https://kit.fontawesome.com/9e0958114b.js" crossorigin="anonymous"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap" rel="stylesheet">
-    <title>testing</title>
+    <title>PDF 2 HTML</title>
     <script>
         function exchangeOptions() {
             const dropdown1 = document.getElementById('frommenu');
@@ -30,12 +31,17 @@
             var file = thefile.files[0];
             if (file) {
                 document.getElementById('file-name').textContent = file.name;
-                document.getElementById('file-size').textContent = (file.size / 1024).toFixed(2) + ' KB';
+                document.getElementById('file-size').textContent = (file.size / 1000000).toFixed(2) + ' MB';
                 submitbox.style.display = 'flex';
                 document.getElementById('box').style.display = 'none';
             } 
         }
         function removeFile(file) {
+            document.getElementById("response").innerHTML = "";
+            const button = document.getElementById('translate-button');
+            button.disabled = false;
+            button.style.backgroundColor =" var(--buttoncolor1)";
+            button.style.color = "white";
             document.getElementById('file-name').textContent = "";
             document.getElementById('file-size').textContent = "";
             file.value = null;
@@ -48,12 +54,12 @@
 <body>
     <div class="navbar">
         <div class="left">
-            <div class="logo">logo</div>
-            <div class="items">item 1</div>
+            <div class="logo"><img src="{%static 'images/poto.png'%}" alt="logo" srcset=""></div>
+            <div class="items">Convert PDF 2 HTML</div>
         </div>
         <div class="right">
-            <div class="items">about</div>
-            <div class="items">my site</div>
+            <div class="items"><a href="https://github.com/MohdMarzook/pdf_translator_app">Github</a></div>
+            <div class="items"><a href="https://mohdmarzook.pythonanywhere.com/">My Portfolio</a></div>
         </div>
     </div>
     <form id="fileform" method="post" enctype="multipart/form-data" novalidate>
@@ -116,15 +122,28 @@
                     <div><button type="button" class="remove-button" onclick="removeFile(this)">×</button></div>
                 </div>
                 <button id="translate-button" class="btnstyle" type="submit" form="fileform">Translate</button>
+                <div id="response" style="padding-top:20px ;margin: 0px 10px">
+
+                </div>
             </div>
         </div>
     </form>
     <script src="{% static 'javascript/customscript.js' %}"></script>
-    <div id="response"></div>
     <script>
         const button = document.getElementById('translate-button');
         document.getElementById('fileform').addEventListener('submit', async function(e) {
             e.preventDefault();
+            button.disabled = true;
+            button.style.backgroundColor = "#00b5bf00";
+            button.style.color = "black";
+            // <img src="myGIF.gif" alt="My cool gif" width="500" height="600">
+
+            const loading = document.createElement('img');
+            loading.src = "{% static 'images/loading.gif' %}"
+            loading.width = 40
+            loading.height = 40
+            loading.setAttribute('id', 'loadingtag'); 
+            document.getElementById('response').appendChild(loading);
             const formData = new FormData(this);
             const response = await fetch('{% url "file_upload" %}', {
                 method: 'POST',
@@ -134,19 +153,19 @@
                 },
                 body: formData,
             });
-
-            button.disabled = true;
-            button.style.backgroundColor = "#00b5bf00";
-            button.style.color = "black";
+           
+            
 
             const data = await response.json(); 
             if (response.ok) {
                 const downloadLink = document.createElement('a');
+                downloadLink.classList.add('btnstyle');
+                downloadLink.setAttribute("id", "downloadlink");
                 downloadLink.href = `/download/${data.unique_tag}/`;
                 downloadLink.innerText = 'Download Translated PDF';
-                document.getElementById('response').appendChild(downloadLink);
+                document.getElementById('loadingtag').replaceWith(downloadLink);
             } else {
-                document.getElementById('response').innerText = `Error: ${data.error}`;
+                document.getElementById('loadingtag').innerText = `Error: ${data.error}`;
             }
         });
     </script>

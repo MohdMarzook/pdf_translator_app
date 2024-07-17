@@ -31,12 +31,26 @@ body{
     background-color:var(--navbarcolor);
     color: white;
 }
-.navbar > .left ,
-.navbar > .right{
+.left ,.right{
     display: flex;
     flex-direction: row;
-    width: 100px;
-    justify-content: space-around;
+    align-items: center;
+    
+}
+.navbar{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    
+}
+.left , .left > .items{
+    padding-left: 10px ;
+    text-decoration: none;
+}
+.right > .items{
+    padding: 0px 10px;
+
 }
 .content{
     display: flex;
@@ -123,6 +137,8 @@ body{
     border-radius: 5px;
     margin-top: 5px;
     font-size: 16px;
+    text-decoration: none;
+    align-content: center;
 }
 
 
@@ -167,4 +183,32 @@ body{
     margin-top: 5px;
     font-size: 16px;
     color: #fff;
+}
+
+@media only screen and (max-width: 860px){
+    .content{
+        margin: 80px 20px;
+    }
+    .exchange{
+        margin-top:10px;
+        margin-left:80px;
+    }
+    #draganddrop, .box > .divider_line {
+        display: none;
+    }
+    .content > .lang{
+        flex-direction:column;
+    }
+    .symbol{
+        margin-left:-90px;
+        margin-right:-40px
+    }
+    .file-details{
+        width:75%;
+    }
+    .file-details > .fname-fsize {
+        margin-right: 5px;
+        margin-left:-15px;
+    }
+
 }

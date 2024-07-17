@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-s%ma&6%xiq)sjhmoqtwbwow1b&wn-(=0p9v_c)qtue3x9x*#!b
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -43,6 +43,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -129,4 +130,7 @@ MEDIA_ROOT = BASE_DIR / 'media/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+DATA_UPLOAD_MAX_MEMORY_SIZE = 1024 * 1024 * 30  
+FILE_UPLOAD_MAX_MEMORY_SIZE = 1024 * 1024 * 30
 
