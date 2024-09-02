@@ -28,11 +28,11 @@ def file_upload_view(request):
                 "from" : request.POST['from'],
                 "to" : request.POST['to']
             }
+            # print(pdf.file , round(fsize/1048576, 2),"mb", ftype)
             pdf.save()
-            print(pdf.file , round(fsize/1048576, 2),"mb", ftype)
             translator.initializer(data)
 
-            print("file saved") 
+            # print("got file") 
 
             return JsonResponse({'unique_tag': str(pdf.unique_tag)})
         
@@ -51,12 +51,9 @@ def index(request):
 def download_file(request, unique_tag):
     try:
         pdf_record = PDFFile.objects.get(unique_tag=unique_tag)
-        # print(pdf_record)
-        # print(pdf_record.file)
         response = HttpResponse(pdf_record.translated_html, content_type='text/html')
-        # print(pdf_record.translated_file.name)
-        # print(pdf_record.file.name)
-        response['Content-Disposition'] = f'attachment; filename="{pdf_record.translated_html.name}"'
+        # print(pdf_record.translated_html.name[11:]," sent file")
+        response['Content-Disposition'] = f'attachment; filename="{pdf_record.translated_html.name[11:]}"'
         return response
     except PDFFile.DoesNotExist:
         return JsonResponse({'error': 'File not found'}, status=404)

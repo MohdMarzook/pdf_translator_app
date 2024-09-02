@@ -2,7 +2,6 @@ import os
 import time
 import subprocess
 from bs4 import BeautifulSoup as bs
-from pyhtml2pdf import converter
 from googletrans import Translator
 from deep_translator import GoogleTranslator
 
@@ -10,18 +9,18 @@ from deep_translator import GoogleTranslator
 def create_directory(directory):
     os.makedirs(directory, exist_ok=True)
 
-def html2pdf_and_save(html_filename,new_file_name, og_name):
-    output_filename = f"./media/translated_pdf/{new_file_name}"
+# def html2pdf_and_save(html_filename,new_file_name, og_name):
+#     output_filename = f"./media/translated_pdf/{new_file_name}"
     
 
-    # print_options = {
-    #     'paperHeight': 11.69,
-    #     'paperWidth': 8.27,
-    #     'printBackground': True
-    # }
+#     # print_options = {
+#     #     'paperHeight': 11.69,
+#     #     'paperWidth': 8.27,
+#     #     'printBackground': True
+#     # }
 
-    converter.convert(f'file:///code/htmlfiles/{og_name}', output_filename)
-    print(f"done! The output file is saved in {output_filename}")
+#     converter.convert(f'file:///code/htmlfiles/{og_name}', output_filename)
+#     print(f"done! The output file is saved in {output_filename}")
 
 def translate_text(text, from_language, to_language):
     try:
@@ -50,6 +49,9 @@ def process_multiclass(multidiv, soup, from_lang, to_lang):
                 multidiv.string = translate_text(multidiv.get_text(), from_lang, to_lang)
                 multidiv.append(saved_span)
                 return
+
+        # print(multidiv.string)
+        # input()
         multidiv.string = translate_text(multidiv.get_text(), from_lang, to_lang)
     else:
         multidiv.string = translate_text(multidiv.get_text(), from_lang, to_lang)
